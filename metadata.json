@@ -1,0 +1,6 @@
+{
+  "name": "CueCard Trivia",
+  "description": "An interactive trivia game show hosted by a dynamic AI personality with search-grounded questions, expressive text-to-speech, and real-time voice conversations.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
