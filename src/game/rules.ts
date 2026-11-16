@@ -31,6 +31,22 @@ export const DIFFICULTY_CONFIG: Record<
   },
 };
 
+export function getDifficultyVisualMeta(difficulty: Difficulty): {
+  label: string;
+  basePoints: number;
+  bars: 1 | 2 | 3;
+  tone: 'emerald' | 'amber' | 'rose';
+} {
+  const cfg = DIFFICULTY_CONFIG[difficulty] ?? DIFFICULTY_CONFIG.standard;
+  if (difficulty === 'casual') {
+    return { label: cfg.label, basePoints: cfg.basePoints, bars: 1, tone: 'emerald' };
+  }
+  if (difficulty === 'expert') {
+    return { label: cfg.label, basePoints: cfg.basePoints, bars: 3, tone: 'rose' };
+  }
+  return { label: cfg.label, basePoints: cfg.basePoints, bars: 2, tone: 'amber' };
+}
+
 export function calculatePoints(params: {
   isCorrect: boolean;
   streakBefore: number;

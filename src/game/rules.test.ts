@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   calculatePoints,
   computeShowSummary,
+  getDifficultyVisualMeta,
   getNextStreak,
   parseTriviaResponseJson,
   sanitizeCustomTopic,
@@ -115,4 +116,25 @@ test('buildCustomHost constructs valid persona and sanitizeCustomTopic trims whi
   assert.equal(custom.id, 'custom');
   assert.equal(custom.voiceName, 'Zephyr');
   assert.match(custom.systemInstruction, /Host Nova/);
+});
+
+test('getDifficultyVisualMeta maps casual, standard, and expert to distinct bars and tones', () => {
+  assert.deepEqual(getDifficultyVisualMeta('casual'), {
+    label: 'Casual',
+    basePoints: 100,
+    bars: 1,
+    tone: 'emerald',
+  });
+  assert.deepEqual(getDifficultyVisualMeta('standard'), {
+    label: 'Standard',
+    basePoints: 150,
+    bars: 2,
+    tone: 'amber',
+  });
+  assert.deepEqual(getDifficultyVisualMeta('expert'), {
+    label: 'Expert',
+    basePoints: 200,
+    bars: 3,
+    tone: 'rose',
+  });
 });

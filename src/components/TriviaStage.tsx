@@ -8,7 +8,7 @@ import {
   Volume2,
   XCircle,
 } from 'lucide-react';
-import { DIFFICULTY_CONFIG, stripTtsDirectives } from '../game/rules';
+import { getDifficultyVisualMeta, stripTtsDirectives } from '../game/rules';
 import {
   GroundingSource,
   HostPersona,
@@ -132,18 +132,56 @@ export function TriviaStage({
             className="lg:col-span-7 space-y-6"
           >
             <div className="rounded-2xl bg-[#131B2E] border border-white/10 p-6 sm:p-8 space-y-6">
-              {/* Unboxed Metadata Line */}
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-400">
-                <span className="text-amber-300 font-medium whitespace-nowrap">
-                  {question.category}
-                </span>
-                <span className="whitespace-nowrap">
-                  · {DIFFICULTY_CONFIG[question.difficulty].label}
-                </span>
-                <span className="font-mono-tabular whitespace-nowrap">
-                  · Round {questionIndex + 1} of {questions.length}
-                </span>
-              </div>
+              {/* Unboxed Metadata & Visual Difficulty Gauge */}
+              {(() => {
+                const diffMeta = getDifficultyVisualMeta(question.difficulty);
+                const toneClasses =
+                  diffMeta.tone === 'emerald'
+                    ? { text: 'text-emerald-300', bar: 'bg-emerald-400' }
+                    : diffMeta.tone === 'rose'
+                      ? { text: 'text-rose-300', bar: 'bg-rose-400' }
+                      : { text: 'text-amber-300', bar: 'bg-amber-400' };
+
+                return (
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-400">
+                      <span className="text-amber-300 font-medium whitespace-nowrap">
+                        {question.category}
+                      </span>
+                      <span className="font-mono-tabular whitespace-nowrap">
+                        · Round {questionIndex + 1} of {questions.length}
+                      </span>
+                    </div>
+
+                    <div
+                      data-testid="difficulty-indicator"
+                      data-difficulty={question.difficulty}
+                      aria-label={`Difficulty: ${diffMeta.label}, ${diffMeta.basePoints} base points`}
+                      className={`inline-flex items-center gap-2 text-xs font-semibold whitespace-nowrap shrink-0 ${toneClasses.text}`}
+                    >
+                      <span
+                        className="inline-flex items-end gap-0.5 h-3.5"
+                        aria-hidden="true"
+                      >
+                        {[1, 2, 3].map((step) => (
+                          <span
+                            key={step}
+                            className={`w-1 rounded-xs ${
+                              step === 1 ? 'h-1.5' : step === 2 ? 'h-2.5' : 'h-3.5'
+                            } ${
+                              step <= diffMeta.bars ? toneClasses.bar : 'bg-slate-700'
+                            }`}
+                          />
+                        ))}
+                      </span>
+                      <span>{diffMeta.label}</span>
+                      <span className="font-mono-tabular text-[11px] text-slate-400 font-normal">
+                        · {diffMeta.basePoints} pts
+                      </span>
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Question Prompt */}
               <h1 className="font-display text-2xl sm:text-[28px] font-semibold text-white leading-snug text-balance">
